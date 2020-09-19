@@ -5,13 +5,13 @@ App     = ExpressApp()
 Router  = App.router()
 Handler = App.handler()
 
-@Router.get(route="/hi", handler=Handler)
+@Router.get(route="/", handler=Handler)
 def test(t):
   print(t)
 
 
-@Router.multi(methods=["GET"], route="/g", handler=Handler)
-def test2(t):
+@Router.multi(methods=["GET"], route="/honk", handler=Handler)
+def honk(t):
   print(t)
 
 
