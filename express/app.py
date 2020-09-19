@@ -4,7 +4,6 @@ from express.exceptions.errors import AppError
 from express.tcpserver.server import Server
 import socket 
 
-
 class App:
   
   _router: Router = Router()
@@ -12,25 +11,32 @@ class App:
   _server: Server or None = None
 
   def router(self) -> Router:
+    """ Returns Router instance. """
     return self._router 
 
   def handler(self) -> RouteHandler:
+    """ Returns RouteHandler instance. """
     return self._handler
 
   def port_in_use(self, port: int) -> bool:
+    """ Checks if the port is currently in use. """
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     return not bool(sock.connect_ex( ('localhost', port) ))
 
   def is_valid_port(self, port: int) -> bool:
+      """ Makes sure the port is valid. """
       return type(port) == int or port > 0 or port < 65536
 
   def listen(self, port: int = 3000) -> None:
+    """ Attempt to serve the webserver on a specific port. """
+
     if not self.is_valid_port(port):
       raise AppError("Mismatch: Type '{}' passed when int was expected.".format(type(port)))
       
     if not self.port_in_use(port):
         self._server = Server(port)
-        print("Listening on localhost:{}.".format(port))
         self._server.start()
+        print("Listening on localhost:{}.".format(port))
     else:
         raise AppError("Port '{}' is already in use.".format(port))
