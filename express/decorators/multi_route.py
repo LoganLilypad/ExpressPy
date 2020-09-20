@@ -27,7 +27,7 @@ class MultiRoute(object):
         else:
           raise RouteError("Method '{}' is not accepted.".format(str(method)))
     else:
-
+      print("hi")
       raise RouteValidationError(str(route))
 
   def __call__(self, func: Callable) -> Callable:

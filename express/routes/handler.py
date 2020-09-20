@@ -60,6 +60,25 @@ class RouteHandler:
       self._multiRoutes[route] = { "methods": methods, "route": route, "handle": route_handle }
       self._dispatcher.register(route, route_handle)
 
+  def get(self, route: str) -> dict or None:
 
-  def test(method: str = "GET", data: str or None = None) -> None:
-    pass
+      if self.hasSingleRoute(route):
+          return self._handledRoutes[route]
+      elif self.hasMultiRoute(route):
+          return self._multiRoutes[route]
+      else:
+          return None
+
+  def is_accepted(self, route: str, method: str = "GET") -> bool:
+      if self.hasSingleRoute(route):
+          return method == self._handledRoutes["method"]
+      elif self.hasMultiRoute(route):
+          return method in self._multiRoutes["methods"]
+      else:
+          return False      
+
+  def clear(self):
+    self._dispatcher = Dispatcher()
+    self._listener = Listener(self._dispatcher)
+    self._multiRoutes = dict()
+    self._handledRoutes = dict()

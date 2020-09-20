@@ -36,7 +36,12 @@ class App:
       
     if not self.port_in_use(port):
         self._server = Server(port)
-        self._server.start()
-        print("Listening on localhost:{}.".format(port))
+        print("Listening on localhost: {}.".format(port))
+
+        self._server.start(self)
+        #  print("Listening on localhost:{}.".format(port)) | Moved this line above: It doesn't get executed since .start() has a while True loop.
     else:
         raise AppError("Port '{}' is already in use.".format(port))
+
+  def new(self):
+    return App()

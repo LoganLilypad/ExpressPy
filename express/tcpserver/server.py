@@ -1,11 +1,20 @@
+import socket 
+import time
+from express.request import Request
+from express.response import Response
+from express.tcpserver.socket_thread import ServerSocketThread
+
 class Server:
-  host: str = '127.0.0.1'
+  host: str = 'localhost'
   port: int
 
   def __init__(self, port: int) -> None:
     self.port = port
 
-  def start(self) -> None:
-    pass
+  def start(self, app) -> socket:
 
-
+    sub = ServerSocketThread(app, self.host, self.port)
+    sub.start()
+    
+    return sub.socket
+    

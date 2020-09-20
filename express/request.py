@@ -33,7 +33,7 @@ class Request:
 
   @staticmethod
   def is_valid_method(method: str) -> bool:
-    methods = [
+    _methods = [
       "GET", 
       # "HEAD", 
       "POST", 
@@ -45,10 +45,7 @@ class Request:
       # "TRACE"
     ]
 
-    if method.strip().upper() in methods:
-      return True
-    else: 
-      return False
+    return method.strip().upper() in _methods
 
 
   @staticmethod 
@@ -70,18 +67,34 @@ class Request:
     return re.sub(Request(None).query_regex, '', line)
 
   @staticmethod
+  def parse_cookie(line: str) -> None:
+    cookie = ""
+
+    matches = re.findall("Cookie\:\ .{1,}", line)
+
+
+    for match in matches:
+        cookie = match
+
+    return Request.decode(cookie) 
+
+  @staticmethod
   def parse(request_line: str):
 
     headers = {}
     queries = {}
 
-    for line in request_line.lower().split("\r\n"):
-      parsed = line.split(":")
+
+    for line in request_line.lower().strip().split("\r\n"):
+      parsed = line.replace(":", "~", 1).split("~")
       if len(parsed) > 1:
         headers[parsed[0]] = parsed[1].strip()
       else:
+       
         method_type = parsed[0].split(" ")
 
+
+      
         if Request.is_valid_method(method_type[0]):
           if len(method_type) == 3:
             headers["path"] = method_type[1]
@@ -93,13 +106,16 @@ class Request:
           else:
             headers["method"] = method_type[0].upper()
             headers["__v"] = method_type[1].upper()    
-        else:
+        elif len(method_type[0]) <= 0:
           raise RequestValidationError(method_type[0].upper())
           
     try:
       headers["content-type"]
     except KeyError:
       headers["content-type"] = "html/plaintext"
+
+    if Request.parse_cookie(Request.decode(request_line)) != None:
+        headers["cookie"] = Request.parse_cookie(Request.decode(request_line))
 
     if len(queries) > 0:
       return Request(headers["method"], headers, None, queries, Request.remove_query_string(headers["path"]), headers["path"])
@@ -108,15 +124,38 @@ class Request:
 
 
   @staticmethod
-  def generate(_dict: dict) -> str:
+  def generate(_dict: dict, status: int = 200) -> str:
 
-    request = ""
+    request = "Http/1.0 {status}" 
 
-    for k, v in _dict.items():
+    for k, v in _dict.items:
       k = k.lower()
       v = v.lower()
       request += " {}: {}".format(k.replace(k[0], k[0].upper(), 1), v)
 
     return request.strip()
+
+  @staticmethod
+  def decode(_r: str) -> str:
+
+    _new = ""
+    _match = re.findall("\%[a-zA-Z0-9]{1,2}", _r.strip())
+
+    for match in _match:
+        
+        _old = match
+        match = match.replace("%", "", 1)
+        _new = _r.replace(_old,  chr(int("0x{}".format(match), 16)))
+
+    if not _new:
+      return _r.strip()
+    else:
+      return _new
+    
+    
+
+    
+
+
 
 
