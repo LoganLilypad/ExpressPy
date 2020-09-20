@@ -13,13 +13,13 @@ class RouteHandler:
     self._dispatcher = dispatcher 
 
   def isValidMethod(self, method: str) -> bool: 
-    return method == None or type(method) != str or len(method) == 0
+    return method != None or type(method) == str or len(method) > 0
 
   def isValidMethodList(self, methods: list) -> bool: 
-    return methods == None or len(methods) == 0 or type(methods) != list
+    return methods != None or len(methods) != 0 or type(methods) == list
 
   def registerRoute(self, method: str, route: str, route_handle: Callable) -> None:
-    if self.isValidMethod(method):
+    if not self.isValidMethod(method):
       raise RouteError("Invalid method passed to registerRoute(...)")
 
     route = route.replace("/", "", 1)
@@ -50,7 +50,7 @@ class RouteHandler:
   def registerMultiRoute(self, methods: list, route: str, route_handle: Callable) -> None:
     route = route.replace("/", "", 1)
 
-    if self.isValidMethodList(methods):
+    if not self.isValidMethodList(methods):
       raise RouteError("Invalid methods passed to registerRoute(...)")
     if self.hasSingleRoute(route):
       raise RouteError("Route '{}' is already handled by method '{}'".format(route,self._handledRoutes[route]["handle"].__name__))
