@@ -25,7 +25,6 @@ class Route(object):
         raise RouteError("Method '{}' is not accepted.".format(str(method)))
 
     else:
-      print("hI")
       raise RouteValidationError(str(route))
 
   def __call__(self, func: Callable) -> Callable:

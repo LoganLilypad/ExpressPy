@@ -10,8 +10,9 @@ class Response:
     return self
 
   def send(self, response: dict or str) -> None:
+    #TBA: Integrate response variable.
+    
     if self.status != None:
         self._socket.send(bytes("Http/1.0 {}".format(self.status), 'utf8'))
-    else:
-        print("hi")
+    else: 
         self._socket.send(bytes("Http/1.0 200 OK", 'utf8'))
