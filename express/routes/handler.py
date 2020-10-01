@@ -19,8 +19,9 @@ class RouteHandler:
   def isValidMethodList(self, methods: list) -> bool: 
     return methods != None or len(methods) != 0 or type(methods) == list
 
+
   def isValidFunction(self, potential_method: Callable) -> bool:
-    return callable(potential_method) and (not isclass(potential_method))
+    return callable(potential_method) and not isclass(potential_method)
 
   def registerRoute(self, method: str, route: str, route_handle: Callable) -> None:
 
