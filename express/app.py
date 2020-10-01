@@ -6,9 +6,10 @@ import socket
 
 class App:
   
-  _router: Router = Router()
   _handler: RouteHandler = RouteHandler()
+  _router: Router = Router(_handler) # Realized it would probably be better to do it like this rather then having the user pass the handler.
   _server: Server or None = None
+  _MAX_PORT = 65536
 
   def router(self) -> Router:
     """ Returns Router instance. """
@@ -26,7 +27,7 @@ class App:
 
   def is_valid_port(self, port: int) -> bool:
       """ Makes sure the port is valid. """
-      return type(port) == int or port > 0 or port < 65536
+      return type(port) == int or port > 0 or port < self._MAX_PORT
 
   def listen(self, port: int = 3000) -> None:
     """ Attempt to serve the webserver on a specific port. """
@@ -38,7 +39,7 @@ class App:
         self._server = Server(port)
         print("Listening on localhost: {}.".format(port))
 
-        self._server.start(self)
+        self._server.start_server_thread(self)
         #  print("Listening on localhost:{}.".format(port)) | Moved this line above: It doesn't get executed since .start() has a while True loop.
     else:
         raise AppError("Port '{}' is already in use.".format(port))

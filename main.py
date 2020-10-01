@@ -4,14 +4,13 @@ from express.request import Request
 
 App     = ExpressApp()
 Router  = App.router()
-Handler = App.handler()
 
-@Router.get(route="/", handler=Handler)
+@Router.get(route="/")
 def test(t):
   pass
 
 
-@Router.multi(methods=["GET"], route="/honk", handler=Handler)
+@Router.multi(methods=["GET"], route="/honk")
 def honk(req, res):
   res.send(b'hi')
 
