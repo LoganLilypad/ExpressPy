@@ -15,6 +15,13 @@ class DispatchValidationError(Exception):
   def __init__(self, instance: str, message: str = _cause) -> None:
     super().__init__(message.format(instance))
 
+class MethodValidationError(Exception):
+    """Raised when invalid method list is passed to registerMultiRoute."""
+
+    def __init__(self, instance: str, message: str) -> None:
+        # No predetermined message here, could potentially change later.
+        super().__init__(message);
+
 class RouteValidationError(Exception):
   """Raised when invalid route is passed to decorator."""
 

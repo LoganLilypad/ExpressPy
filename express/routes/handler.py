@@ -1,6 +1,7 @@
 from express.dispatcher.dispatch import Dispatcher, Listener
 from typing import Callable 
-from express.exceptions.errors import RouteError
+from express.exceptions.errors import RouteError, MethodValidationError
+from inspect import isclass
 
 class RouteHandler:
 
@@ -18,18 +19,29 @@ class RouteHandler:
   def isValidMethodList(self, methods: list) -> bool: 
     return methods != None or len(methods) != 0 or type(methods) == list
 
+  def isValidFunction(self, potential_method: Callable) -> bool:
+    return callable(potential_method) and (not isclass(potential_method))
+
   def registerRoute(self, method: str, route: str, route_handle: Callable) -> None:
+
+    if not self.isValidFunction(route_handle):
+      raise RouteError("Invalid route handle passed to registerRoute(...)")
+
     if not self.isValidMethod(method):
-      raise RouteError("Invalid method passed to registerRoute(...)")
+      raise RouteError("Invalid route method passed to registerRoute(...)")
 
     route = route.replace("/", "", 1)
 
-    try:
-      if self._handledRoutes[route] != None:
-        raise RouteError(
-          "Route '{}' is already handled by method '{}'".format(route, self._handledRoutes[route]["handle"].__name__)
-        )
-    except KeyError:
+    if self.hasSingleRoute(route) or self.hasMultiRoute(route):
+        is_single_route = self.hasSingleRoute(route)
+        
+        if is_single_route:
+            
+            raise RouteError("Route '{}' is already managed by {}".format(route, self.getByName(route)["handle"].__name__))
+        else:
+            # Honestly, it probably shouldn't make it here considering this is the function used for 
+            raise RouteError("Multi Route '{}' is already managed by {}".format(route, self.getByName(route)["handle"].__name__))
+    else:
         self._handledRoutes[route] = { "method": method, "route": route, "handle": route_handle }
         self._dispatcher.register(route, route_handle)
 
@@ -48,26 +60,36 @@ class RouteHandler:
       return False  
 
   def registerMultiRoute(self, methods: list, route: str, route_handle: Callable) -> None:
+
+
+    if not self.isValidFunction(route_handle):
+      raise RouteError("Invalid route handle passed to registerMultiRoute(...)")
+
     route = route.replace("/", "", 1)
 
     if not self.isValidMethodList(methods):
-      raise RouteError("Invalid methods passed to registerRoute(...)")
-    if self.hasSingleRoute(route):
-      raise RouteError("Route '{}' is already handled by method '{}'".format(route,self._handledRoutes[route]["handle"].__name__))
-    elif self.hasMultiRoute(route):
-      raise RouteError("MultiRoute '{}' is already handled by method '{}'".format(route,self._multiRoutes[route]["handle"].__name__))
+        raise MethodValidationError("Invalid route method list passed to registerMultiRoute(...)")
+
+    if self.hasSingleRoute(route) or self.hasMultiRoute(route):
+        is_single_route = self.hasSingleRoute(route)
+        
+        if is_single_route:
+            # Honestly, it would be weird if it made it here but might aswell include the functionality anyways.
+            raise RouteError("Route '{}' is already managed by {}".format(route, self.getByName(route)["handle"].__name__))
+        else:
+            raise RouteError("Multi Route '{}' is already managed by {}".format(route, self.getByName(route)["handle"].__name__))
     else:
       self._multiRoutes[route] = { "methods": methods, "route": route, "handle": route_handle }
       self._dispatcher.register(route, route_handle)
 
-  def get(self, route: str) -> dict or None:
+  def getByName(self, route: str) -> dict or None:
 
-      if self.hasSingleRoute(route):
-          return self._handledRoutes[route]
-      elif self.hasMultiRoute(route):
-          return self._multiRoutes[route]
-      else:
-          return None
+    if self.hasSingleRoute(route):
+        return self._handledRoutes[route]
+    elif self.hasMultiRoute(route):
+        return self._multiRoutes[route]
+    else:
+        return None
 
   def is_accepted(self, route: str, method: str = "GET") -> bool:
       if self.hasSingleRoute(route):
