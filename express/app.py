@@ -33,16 +33,12 @@ class App:
     """ Attempt to serve the webserver on a specific port. """
 
     if not self.is_valid_port(port):
-      raise AppError("Mismatch: Type '{}' passed when int was expected.".format(type(port)))
+      raise AppError(f"Mismatch: Type '{type(port)}' passed when int was expected.")
       
     if not self.port_in_use(port):
         self._server = Server(port)
         print("Listening on localhost: {}.".format(port))
 
         self._server.start_server_thread(self)
-        #  print("Listening on localhost:{}.".format(port)) | Moved this line above: It doesn't get executed since .start() has a while True loop.
     else:
-        raise AppError("Port '{}' is already in use.".format(port))
-
-  def new(self):
-    return App()
+        raise AppError(f"Port '{port}' is already in use.")

@@ -14,10 +14,10 @@ class RouteHandler:
     self._dispatcher = dispatcher 
 
   def isValidMethod(self, method: str) -> bool: 
-    return method != None or type(method) == str or len(method) > 0
+    return method != None and type(method) == str and len(method) > 0
 
   def isValidMethodList(self, methods: list) -> bool: 
-    return methods != None or len(methods) != 0 or type(methods) == list
+    return methods != None and len(methods) != 0 and type(methods) == list
 
   def isValidFunction(self, potential_method: Callable) -> bool:
     return callable(potential_method) and (not isclass(potential_method))
@@ -34,13 +34,15 @@ class RouteHandler:
 
     if self.hasSingleRoute(route) or self.hasMultiRoute(route):
         is_single_route = self.hasSingleRoute(route)
-        
+        name = self.getByName(route)["handle"].__name__
+
         if is_single_route:
             
-            raise RouteError("Route '{}' is already managed by {}".format(route, self.getByName(route)["handle"].__name__))
+            raise RouteError(f"Route '{route}' is already managed by {name}")
         else:
             # Honestly, it probably shouldn't make it here considering this is the function used for 
-            raise RouteError("Multi Route '{}' is already managed by {}".format(route, self.getByName(route)["handle"].__name__))
+            # Multi routes, but oh well.
+            raise RouteError(f"Route '{route}' is already managed by {name}")
     else:
         self._handledRoutes[route] = { "method": method, "route": route, "handle": route_handle }
         self._dispatcher.register(route, route_handle)
