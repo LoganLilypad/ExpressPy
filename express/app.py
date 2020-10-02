@@ -27,22 +27,18 @@ class App:
 
   def is_valid_port(self, port: int) -> bool:
       """ Makes sure the port is valid. """
-      return type(port) == int or port > 0 or port < self._MAX_PORT
+      return type(port) == int and port > 0 and port < self._MAX_PORT
 
   def listen(self, port: int = 3000) -> None:
     """ Attempt to serve the webserver on a specific port. """
 
     if not self.is_valid_port(port):
-      raise AppError("Mismatch: Type '{}' passed when int was expected.".format(type(port)))
+      raise AppError(f"Mismatch: Type '{type(port)}' passed when int was expected.")
       
     if not self.port_in_use(port):
         self._server = Server(port)
         print("Listening on localhost: {}.".format(port))
 
         self._server.start_server_thread(self)
-        #  print("Listening on localhost:{}.".format(port)) | Moved this line above: It doesn't get executed since .start() has a while True loop.
     else:
-        raise AppError("Port '{}' is already in use.".format(port))
-
-  def new(self):
-    return App()
+        raise AppError(f"Port '{port}' is already in use.")

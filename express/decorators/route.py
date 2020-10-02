@@ -22,7 +22,7 @@ class Route(object):
           raise RouteHandlerError(str(handler))
 
       else:
-        raise RouteError("Method '{}' is not accepted.".format(str(method)))
+        raise RouteError(f"Method '{str(method)}' is not accepted.")
 
     else:
       raise RouteValidationError(str(route))
