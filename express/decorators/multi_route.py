@@ -25,7 +25,7 @@ class MultiRoute(object):
             raise RouteHandlerError(str(handler))
 
         else:
-          raise RouteError("Method '{}' is not accepted.".format(str(method)))
+          raise RouteError(f"Method '{method}' is not accepted.")
     else:
       raise RouteValidationError(str(route))
 
