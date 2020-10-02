@@ -27,7 +27,7 @@ class App:
 
   def is_valid_port(self, port: int) -> bool:
       """ Makes sure the port is valid. """
-      return type(port) == int or port > 0 or port < self._MAX_PORT
+      return type(port) == int and port > 0 and port < self._MAX_PORT
 
   def listen(self, port: int = 3000) -> None:
     """ Attempt to serve the webserver on a specific port. """
