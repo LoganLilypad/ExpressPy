@@ -7,7 +7,7 @@ class Request:
   query: dict or None = None
   path: str = ""
   headers: dict or None = None
-  _QUERY_REGEX = "\?\w{1,}=\w{1,}|\&\w{1,}=\w{1,}"
+  _QUERY_REGEX = "\?\w+=\w+|\&\w+=\w+"
 
   @property
   def query_regex(self) -> str:
