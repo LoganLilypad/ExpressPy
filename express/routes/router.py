@@ -16,6 +16,15 @@ class Router(object):
 
   def put(self, route: str) -> Route:
     return Route("PUT", route, self._handler)
+  
+  def delete(self, route: str) -> Route:
+    return Route("DELETE", route, self._handler)
+  
+  def patch(self, route: str) -> Route:
+    return Route("PATCH", route, self._handler)
+   
+  def options(self, route: str) -> Route:
+    return Route("OPTIONS", route, self._handler) 
 
   def multi(self, methods: list, route: str) -> MultiRoute:
     return MultiRoute(methods, route, self._handler)
