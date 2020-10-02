@@ -14,10 +14,10 @@ class RouteHandler:
     self._dispatcher = dispatcher 
 
   def isValidMethod(self, method: str) -> bool: 
-    return method != None or type(method) == str or len(method) > 0
+    return method != None and type(method) == str and len(method) > 0
 
   def isValidMethodList(self, methods: list) -> bool: 
-    return methods != None or len(methods) != 0 or type(methods) == list
+    return methods != None and len(methods) != 0 and type(methods) == list
 
   def isValidFunction(self, potential_method: Callable) -> bool:
     return callable(potential_method) and (not isclass(potential_method))
