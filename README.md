@@ -15,7 +15,7 @@ I think it's pretty coolio considering theres no other library that aims to do t
 ## ExpressPY
 
 ```py
-@Router.get(route="/", handler=Handler)
+@Router.get(route="/")
 def test(req, res):
   print(req)
 ```
