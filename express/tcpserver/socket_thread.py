@@ -19,25 +19,7 @@ class ServerSocketThread(Thread):
 
         super().__init__()
         self.start()
-
-    def _detect_exit(self, sock) -> None:
-        try:
-            print("waiting for keyboardinterrupt")
-            sleep(1)
-        except KeyboardInterrupt:
-            sock.close
-            exit()
-
-    def _handle_request(self, conn, addr) -> None:
-        while True:
-            data = conn.recv(2048)
-
-            if not data:
-                break
-            else:
-                conn.send(bytes(data))
-                conn.close()
-
+        
     def valid_exit(self) -> bool:
         # Hacky method but who fucking cares? not me
         return keyboard.is_pressed("ctrl+c") or keyboard.is_pressed("ctrl+d") or keyboard.is_pressed("ctrl+z")
