@@ -33,7 +33,7 @@ class App:
     """ Attempt to serve the webserver on a specific port. """
 
     if not self.is_valid_port(port):
-      raise AppError(f"Mismatch: Type '{type(port)}' passed when int was expected.")
+      raise AppError(f"The specified port is invalid.")
       
     if not self.port_in_use(port):
         self._server = Server(port)
